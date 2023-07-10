@@ -1,0 +1,2 @@
+"use strict";(self["webpackChunkhashflow_final"]=self["webpackChunkhashflow_final"]||[]).push([[443],{50833:function(n,a,s){s.r(a),s.d(a,{default:function(){return h}});var u=s(73396);const t={class:"about"},e=(0,u._)("h1",null,"This is an about page",-1),r=[e];function f(n,a){return(0,u.wg)(),(0,u.iD)("div",t,r)}var i=s(40089);const l={},c=(0,i.Z)(l,[["render",f]]);var h=c}}]);
+//# sourceMappingURL=about.7f73df3c.js.map
