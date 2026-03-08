@@ -1,0 +1,125 @@
+<style>
+.admin-edit-body {
+  @apply flex flex-col items-center justify-center font-['Inter'] h-[100vh] min-w-[800px];
+} /* lock */
+.admin-edit-content {
+  @apply flex flex-col items-center justify-start grow w-full max-w-[1280px] py-[30px];
+} /* lock */
+
+.admin-edit-content > span {
+  @apply font-black text-[35px] text-left w-full px-[5px];
+} /* lock */
+
+.admin-edit-frame {
+  @apply flex flex-row items-start justify-center w-full h-[1px] grow mt-[20px] gap-10;
+}
+
+.admin-edit-frame > .edit {
+  @apply flex flex-col items-start gap-5 text-[13px] p-[30px] w-[50%];
+}
+.admin-edit-frame > .edit > div {
+  @apply flex flex-col items-start font-bold;
+}
+.admin-edit-frame > .edit > div > span {
+  @apply font-normal text-[16px];
+}
+.admin-edit-frame > .edit > input,
+.admin-edit-frame > .edit > select {
+  @apply border-[1px] border-[#aaa] text-[13px] p-[10px] w-full;
+}
+.admin-edit-frame > .edit > button {
+  @apply border-[1px] border-[#F18642] bg-[#F18642] text-white text-[13px] p-[10px] w-full;
+}
+.admin-edit-frame > .edit > button:hover {
+  @apply border-[#F18642] bg-transparent text-[#F18642] duration-75;
+}
+</style>
+
+<template>
+  <div class="admin-edit-body">
+    <OrgNavBarComponent />
+    <div class="admin-edit-content">
+      <span>Edit User Profile</span>
+
+      <div class="admin-edit-frame">
+        <form class="edit" @submit.prevent="onSignup()">
+          <input
+            type="string"
+            required
+            v-model="name"
+          />
+          <input
+          type="string"
+          required
+          v-model="orgName"
+          disabled
+        />
+          <input
+            type="string"
+            required
+            v-model="address"
+          />
+          <input type="email" required v-model="username" disabled/>
+          <input type="string" required v-model="contact"/>
+
+          <button @click="editOrgProfile()">Update Profile</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import "/src/assets/tailwind.css"; // added
+
+import OrgNavBarComponent from "@/components/OrgNavBarComponent.vue";
+import Parse from "parse";
+
+export default {
+  data() {
+    return {
+      name: "",
+      orgName: "",
+      address: "",
+      username: "",
+      contact: "",
+    };
+  },
+  methods: {
+    back() {
+      this.$router.go(-1);
+    },
+    async editOrgProfile() {
+      try {
+        const UserProfile = Parse.Object.extend("_User");
+        const orgUserId = this.$route.query.orgUserId;
+        const org = new UserProfile();
+        org.set("id", orgUserId);
+        org.set("name", this.name);
+        org.set("address", this.address);
+        org.set("contact", this.contact);
+
+        org.save();
+
+        alert("Successfully Edited Org Profile");
+        this.$router.push({ name: "OrgProfile", query: { orgUserId: orgUserId } });
+      } catch (error) {
+        console.log(error.message);
+      }
+    },
+  },
+  mounted: async function () {
+    const UserProfile = Parse.Object.extend("_User");
+    const query = new Parse.Query(UserProfile);
+    const orgUserId = this.$route.query.orgUserId;
+    const entry = await query.get(orgUserId);
+
+    this.name = entry.get("name");
+    this.orgName = entry.get("orgName");
+    this.address = entry.get("address");
+    this.username = entry.get("username");
+    this.contact = entry.get("contact");
+  },
+  components: { OrgNavBarComponent },
+};
+</script>
